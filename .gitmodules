@@ -1,0 +1,6 @@
+[submodule "mandu-division-frontend"]
+	path = mandu-division-frontend
+	url = https://github.com/vaened/mandu-division-frontend.git
+[submodule "mandu-division-backend"]
+	path = mandu-division-backend
+	url = https://github.com/vaened/mandu-division-backend.git
