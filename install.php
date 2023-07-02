@@ -7,7 +7,7 @@ $rootEnvLines = explode("\n", $rootEnvContent);
 
 $envVars = array_reduce($rootEnvLines, static function (array $acc, string $line) {
     if (empty($line) || !str_contains($line, '=')) {
-        return [];
+        return $acc;
     }
 
     [$key, $value] = explode('=', $line, 2);
