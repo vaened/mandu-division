@@ -43,9 +43,6 @@ run('composer install');
 // Generar llave de aplicación
 run('php artisan key:generate');
 
-// Crear la base de datos si no existe
-run('php artisan db:create');
-
 // Ejecutar migraciones y poblar tablas
 run('php artisan migrate --seed');
 
