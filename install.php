@@ -75,7 +75,14 @@ run(sprintf('start "" /B cmd /c run.bat "%s"', $envVars['APP_PORT']));
 function run(string $command): void
 {
     echo "Ejecutando comando: $command\n";
-    passthru($command);
+
+    passthru($command, $result);
+
+    if ($result !== 0) {
+        echo "Ocurrió un error al ejecutar el comando: $command\n";
+        exit(1);
+    }
+
     echo "\n";
 }
 
