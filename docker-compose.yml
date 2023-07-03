@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  mandu_mysql:
+    container_name: mandu_division-mysql
+    image: mysql:8.0.20
+    restart: unless-stopped
+    env_file: ./mandu-division-backend/.env
+    volumes:
+      - ./storage/database:/var/lib/mysql
+      - ./etc/infrastructure/database:/docker-entrypoint-initdb.d
+    ports:
+      - 4406:${DB_PORT}
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - mandu-division_network
+    command: '--default-authentication-plugin=mysql_native_password'
+
+  mandu_backend_php:
+    container_name: mandu_division_backend-php
+    restart: unless-stopped
+    env_file: ./mandu-division-backend/.env
+    build:
+      context: ./mandu-division-backend
+      dockerfile: Backend.Dockerfile
+    command: >
+      sh -c "chmod -R 775 /app/storage &&
+            php artisan migrate --seed &&
+            php artisan serve --host=0.0.0.0 --port=${APP_PORT}"
+    environment:
+      - "DB_HOST=mandu_mysql"
+      - DB_DATABASE=${DB_DATABASE}
+      - APP_URL=${APP_URL}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${APP_PORT}:8000
+    volumes:
+      - ./mandu-division-backend:/app:delegated
+    depends_on:
+      - mandu_mysql
+    networks:
+      - mandu-division_network
+
+  mandu_frontend_php:
+    container_name: mandu_division_frontend-php
+    restart: unless-stopped
+    build:
+      context: ./mandu-division-frontend
+      dockerfile: Frontend.Dockerfile
+    environment:
+      - VITE_API_URL=${APP_URL}:${APP_PORT}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./mandu-division-frontend/src:/app/src:delegated
+    depends_on:
+      - mandu_backend_php
+    networks:
+      - mandu-division_network
+
+networks:
+  mandu-division_network:
+    driver: bridge
