@@ -1,5 +1,5 @@
 # Mandu Division
-
+Proyecto desarrollado con php8.1, Laravel 9 + React 18
 Clone el repositorio base junto con los submódulos.
 
 ```shell
